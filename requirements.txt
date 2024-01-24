@@ -1,8 +1,9 @@
 # pip3 install -r requirements.txt
-streamlit
+streamlit~=1.30.0
 ragstack-ai
 langchainhub
-openai
+openai~=1.9.0
 tiktoken
 pypdf
-pandas
+pandas~=2.2.0
+langchain~=0.0.354

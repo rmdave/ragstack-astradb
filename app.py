@@ -26,7 +26,7 @@ from langchain.document_loaders import WebBaseLoader
 import openai
 
 print("Started")
-st.set_page_config(page_title='Your Enterprise Sidekick', page_icon='🚀')
+st.set_page_config(page_title='Your Finance Partner', page_icon='🚀')
 
 # Get a unique session id for memory
 if "session_id" not in st.session_state:
@@ -361,8 +361,8 @@ def load_vectorstore(username):
     return AstraDB(
         embedding=embedding,
         collection_name=f"vector_context_{username}",
-        token=st.secrets["ASTRA_TOKEN"],
-        api_endpoint=os.environ["ASTRA_ENDPOINT"],
+        token=st.secrets.astra_tokens[f"{username}"],
+        api_endpoint=st.secrets.astra_endpoints[f"{username}"],
     )
 
 # Cache Chat History for future runs
@@ -371,8 +371,8 @@ def load_chat_history(username):
     print(f"load_chat_history for {username}_{st.session_state.session_id}")
     return AstraDBChatMessageHistory(
         session_id=f"{username}_{st.session_state.session_id}",
-        api_endpoint=os.environ["ASTRA_ENDPOINT"],
-        token=st.secrets["ASTRA_TOKEN"],
+        token=st.secrets.astra_tokens[f"{username}"],
+        api_endpoint=st.secrets.astra_endpoints[f"{username}"],
     )
 
 #####################
@@ -430,7 +430,7 @@ with st.sidebar:
     strategy = st.selectbox('RAG strategy:', ('Basic Retrieval', 'Maximal Marginal Relevance', 'Fusion'), help="Basic retrieval finds the most relevant document with potential duplicate information.\nMMR ensures a balance between relevancy and diversity in the items retrieved.\n Fusion generates a set of additional relevant queries to retrieve relevant documents.", disabled=disable_vector_store)
     prompt_type = st.selectbox('System Prompt:', ('Short results', 'Extended results', 'Custom'))
     print(f"""{disable_vector_store}, {top_k_history}, {top_k_vectorstore}, {chain_type}, {strategy}, {prompt_type}""")
-    custom_prompt = st.text_area('Custom Prompt:', """You're a Code Co-Pilot who helps users write amazing code. Using the context, provide examples in markdown and explain how it all ties together.
+    custom_prompt = st.text_area('Custom Prompt:', """You are a financial advisor that answers questions from your clients specific to credit lines for businesses and insurance planning for individuals. Use the context and chat history to answer the question. If you don't know the answer, just say 'I do not know the answer'.
 
 Use the following context:
 {context}
